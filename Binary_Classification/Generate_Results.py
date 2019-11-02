@@ -37,7 +37,7 @@ def calc_metrics_2d_array(predictions, actual):
     class_1_precision, class_1_recall = calc_metrics_1d_array(predictions[:, 0], actual[:, 0])
     avg_f_measure = calc_avg_f_measure(class_1_precision, class_1_recall)
     difference = np.square(actual - predictions)
-    accuracy = 100 - np.sum(difference) / (len(actual) * 2) * 100
+    accuracy = 100 - np.sum(difference) / (len(actual) * 2)
     return class_1_precision, class_1_recall, avg_f_measure, accuracy
 
 
@@ -64,3 +64,8 @@ def save_results(predictions, actual, epoch):
     print("Average F-Measure:", format(avg_f_measure, '.2f'))
 
 
+def save_losses(train_loss, test_loss, epoch):
+    f = open("Loss.txt", "a+")
+    loss = str(epoch) + " " + str(train_loss) + " " + str(test_loss)
+    f.write(loss)
+    f.close()

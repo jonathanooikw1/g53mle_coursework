@@ -71,10 +71,12 @@ with tf.Session() as sess:
             batch_features, batch_labels = generate_batch(batch_size)
             sess.run(optimizer, feed_dict={X: batch_features, Y: batch_labels})
         if epoch % 50 == 0:
-            c = sess.run(cross_loss, feed_dict={X: X_test, Y: y_test})
+            train_loss = sess.run(cross_loss, feed_dict={X: X_train, Y: y_train})
+            test_loss = sess.run(cross_loss, feed_dict={X: X_test, Y: y_test})
+            results.save_losses(train_loss, test_loss, epoch)
             time_taken = time.time() - start
             start = time.time()
-            print("Epoch: ", (epoch + 1), "Test Loss: ", c, " Time taken: ", format(time_taken, '.2f'))
+            print("Epoch: ", epoch, "Test Loss: ", test_loss, " Time taken: ", format(time_taken, '.2f'))
             results.save_results(sess.run(neural_network, feed_dict={X: X_test}), y_test, epoch)
             model.save_model(epoch, sess.run(b1), sess.run(b2), sess.run(b3), sess.run(b4),
                        sess.run(w1), sess.run(w2), sess.run(w3), sess.run(w4))
