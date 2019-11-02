@@ -1,6 +1,5 @@
 import time
 import os
-import warnings
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.util import deprecation
@@ -8,16 +7,22 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 data_index = 0
 
 
+# This function calculates the f-measure for a single set of precision and recall
 def calc_f_measure(precision, recall):
     b = 1
     return precision * recall * (1 + pow(b, 2)) / (pow(b, 2) * precision + recall)
 
 
+# This function takes in the 5 sets of precision and recall
+# and returns the average f-measure
 def calc_avg_f_measure(p1, r1, p2, r2, p3, r3, p4, r4, p5, r5):
     total_f_measure = calc_f_measure(p1, r1) + calc_f_measure(p2, r2) + calc_f_measure(p3, r3) \
           + calc_f_measure(p4, r4) + calc_f_measure(p5, r5)
     return total_f_measure/5
 
+
+# This function takes in the predictions and label for one AU
+# and calculates the precision and recall
 def calc_metrics_1d_array(predictions, actual):
     true_positive = 0
     false_positive = 0
@@ -40,7 +45,10 @@ def calc_metrics_1d_array(predictions, actual):
     return precision, recall
 
 
+# This function takes in the predictions and labels for 5 AUs
+# And calculates the precision and recall for each class
 def calc_metrics_2d_array(predictions, actual):
+    # Splits the predictions into columns as each column represents on AU
     class_1_precision, class_1_recall = calc_metrics_1d_array(predictions[:, 0], actual[:, 0])
     class_2_precision, class_2_recall = calc_metrics_1d_array(predictions[:, 1], actual[:, 1])
     class_3_precision, class_3_recall = calc_metrics_1d_array(predictions[:, 2], actual[:, 2])
@@ -63,10 +71,12 @@ def calc_metrics_2d_array(predictions, actual):
     print("Average F-Measure:", format(avg_f_measure, '.2f'))
 
 
+# This function loads the pretrained model, or initialises a new one
 def load_model():
     if os.path.isdir("Models"):
         with open(os.path.join("Models", "Versions.txt"), 'r') as f:
             lines = f.read().splitlines()
+            # Looks for the latest model
             checkpoint = lines[-1]
         print("Loading pretrained model at epoch "+ checkpoint)
 
@@ -111,8 +121,8 @@ def load_model():
 
 def generate_batch(batch_size):
     global data_index
-    batch_features = np.ndarray(shape=(batch_size, 98), dtype=np.float32)
-    batch_labels = np.ndarray(shape=(batch_size, 5), dtype=np.intc)
+    batch_features = np.ndarray(shape=(batch_size, n_input), dtype=np.float32)
+    batch_labels = np.ndarray(shape=(batch_size, n_output), dtype=np.intc)
     for i in range(batch_size):
         batch_features[i] = X_train[data_index]
         batch_labels[i] = y_train[data_index]
@@ -125,6 +135,7 @@ def save_model(epoch, b1, b2, b3, b4, w1, w2, w3, w4):
         os.mkdir("Models")
     except FileExistsError:
         x = 1 + 1
+    # Appends the latest model version into Versions.txt
     f = open(os.path.join("Models", "Versions.txt"), "a+")
     f.write(str(epoch) + "\n")
     np.savetxt(os.path.join("Models", 'b1_' + str(epoch) + '.txt'), b1, fmt='%s')
@@ -176,13 +187,14 @@ b1, b2, b3, b4, w1, w2, w3, w4, checkpoint = load_model()
 neural_network = multilayer_perceptron(X)
 
 # Define loss and optimizer
-# loss_op = tf.reduce_mean(tf.math.squared_difference(neural_network, Y))
 cross_loss = tf.reduce_mean(tf.keras.losses.categorical_crossentropy(Y, neural_network))
 optimizer = tf.train.GradientDescentOptimizer(learning_constant).minimize(cross_loss)
 
 init = tf.global_variables_initializer()
 
 
+# Takes in the value of predictions, which is the probability between 0 and 1
+# And rounds it to 0 or 1 depending on the cut off value
 def cut_off(predictions, cutoff):
     for i in range(len(predictions)):
         for ii in range(len(predictions[i])):
