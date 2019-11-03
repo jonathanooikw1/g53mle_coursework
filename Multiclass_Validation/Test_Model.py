@@ -4,8 +4,8 @@ import warnings
 import numpy as np
 import tensorflow as tf
 data_index = 0
-import Binary_Classification.Generate_Results as results
-import Binary_Classification.Model as model
+import Multiclass_Validation.Generate_Results as results
+import Multiclass_Validation.Model as model
 
 
 def multilayer_perceptron(input_d):
@@ -39,6 +39,4 @@ init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
     predictions = sess.run(neural_network, feed_dict={X: X_test})
-    class_1_precision, class_1_recall, avg_f_measure, accuracy = \
-        results.calc_metrics_2d_array(results.cut_off(predictions, 0.5), y_test)
-    print(class_1_precision, class_1_recall, avg_f_measure, accuracy)
+    results = results.calc_metrics_2d_array(results.cut_off(predictions, 0.5), y_test)

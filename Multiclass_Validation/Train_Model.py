@@ -27,7 +27,7 @@ def multilayer_perceptron(input_d):
     # Task of neurons of second hidden layer
     layer_3 = tf.nn.sigmoid(tf.add(tf.matmul(layer_2, w3), b3))
     # Task of neurons of output layer
-    out_layer = tf.nn.softmax(tf.add(tf.matmul(layer_3, w4), b4))
+    out_layer = tf.nn.sigmoid(tf.add(tf.matmul(layer_3, w4), b4))
     return out_layer
 
 
