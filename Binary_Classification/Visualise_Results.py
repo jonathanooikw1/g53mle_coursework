@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
-
-f = open("Results.txt", "r")
 epoch = []
 precision = []
 recall = []
 f_measure = []
 accuracy = []
+
+f = open("Results.txt", "r")
 
 for row in f:
     data = row.split()
@@ -14,6 +14,7 @@ for row in f:
     recall.append(float(data[2]))
     f_measure.append(float(data[3]))
     accuracy.append(float(data[4]))
+f.close()
 
 plt.plot(epoch, precision, label="Precision")
 plt.plot(epoch, recall, label="Recall")

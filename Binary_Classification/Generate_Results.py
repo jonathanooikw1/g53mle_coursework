@@ -3,7 +3,11 @@ import numpy as np
 
 def calc_f_measure(precision, recall):
     b = 1
-    return precision * recall * (1 + pow(b, 2)) / (pow(b, 2) * precision + recall)
+    try:
+        f_measure = precision * recall * (1 + pow(b, 2)) / (pow(b, 2) * precision + recall)
+    except ZeroDivisionError:
+        f_measure = 0
+    return f_measure
 
 
 def calc_avg_f_measure(p1, r1):
@@ -37,7 +41,7 @@ def calc_metrics_2d_array(predictions, actual):
     class_1_precision, class_1_recall = calc_metrics_1d_array(predictions[:, 0], actual[:, 0])
     avg_f_measure = calc_avg_f_measure(class_1_precision, class_1_recall)
     difference = np.square(actual - predictions)
-    accuracy = 100 - np.sum(difference) / (len(actual) * 2)
+    accuracy = (1-np.sum(difference)/(len(actual)*2))
     return class_1_precision, class_1_recall, avg_f_measure, accuracy
 
 
@@ -66,6 +70,6 @@ def save_results(predictions, actual, epoch):
 
 def save_losses(train_loss, test_loss, epoch):
     f = open("Loss.txt", "a+")
-    loss = str(epoch) + " " + str(train_loss) + " " + str(test_loss)
+    loss = str(epoch) + " " + str(train_loss) + " " + str(test_loss) + "\n"
     f.write(loss)
     f.close()

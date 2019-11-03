@@ -67,9 +67,6 @@ with tf.Session() as sess:
     sess.run(init)
     start = time.time()
     for epoch in range(int(checkpoint), number_epochs):
-        for batch_counter in range(num_batch):
-            batch_features, batch_labels = generate_batch(batch_size)
-            sess.run(optimizer, feed_dict={X: batch_features, Y: batch_labels})
         if epoch % 50 == 0:
             train_loss = sess.run(cross_loss, feed_dict={X: X_train, Y: y_train})
             test_loss = sess.run(cross_loss, feed_dict={X: X_test, Y: y_test})
@@ -80,3 +77,8 @@ with tf.Session() as sess:
             results.save_results(sess.run(neural_network, feed_dict={X: X_test}), y_test, epoch)
             model.save_model(epoch, sess.run(b1), sess.run(b2), sess.run(b3), sess.run(b4),
                        sess.run(w1), sess.run(w2), sess.run(w3), sess.run(w4))
+
+        for batch_counter in range(num_batch):
+            batch_features, batch_labels = generate_batch(batch_size)
+            sess.run(optimizer, feed_dict={X: batch_features, Y: batch_labels})
+
