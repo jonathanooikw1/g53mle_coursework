@@ -19,9 +19,9 @@ def obtain_data():
     whole_data=np.concatenate((x_arrayt, y_arrayt),axis=1)
     angle = pd.read_csv("angle.csv", header=0)
     angle_array = np.asarray(angle, dtype = "float")
-    angle_arrayt=angle_array.transpose()
+   # angle_arrayt=angle_array.transpose()
     label=angle_array#+1e-50-1e-50
-    temp=np.array([angle_array[:,0]])
+    #temp=np.array([angle_array[:,0]])
     features = (whole_data - 200) / 2000  # 367616, 98
-    labels = temp.transpose()  # 367616, 1
-    return features, labels
+ #   labels = temp.transpose()  # 367616, 1
+    return features, label

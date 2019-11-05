@@ -22,13 +22,13 @@ def generate_batch(batch_size):
     return batch_features, batch_labels
 
 #Network parameters
-n_hidden1 = 64
-n_hidden2 = 64
-n_hidden3 = 64
+n_hidden1 = 32
+n_hidden2 = 32
+n_hidden3 = 32
 n_input = 98
-n_output = 1
+n_output = 3
 #Learning parameters
-learning_constant = 0.002
+learning_constant = 0.001
 number_epochs = 1000
 
 #Defining the input and the output
@@ -70,7 +70,7 @@ def multilayer_perceptron(input_d):
 #Create model
 neural_network = multilayer_perceptron(X)
 #Define loss and optimizer
-loss_op = tf.reduce_mean(tf.math.squared_difference(neural_network,Y))
+loss_op = tf.sqrt(tf.reduce_mean(tf.math.squared_difference(neural_network,Y)))
 #loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=neural_network,labels=Y))
 optimizer = tf.train.AdamOptimizer(learning_constant).minimize(loss_op)
 
